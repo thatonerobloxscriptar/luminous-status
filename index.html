@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status - Luminous Hosting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #581c87 50%, #1e1b4b 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+        }
+
+        .brand-accent {
+            color: #a855f7;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #d1d5db;
+            margin-top: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .nav-links a {
+            color: #a855f7;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(168, 85, 247, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(168, 85, 247, 0.2);
+            border-color: #a855f7;
+            transform: translateY(-2px);
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: rgba(30, 27, 75, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .status-card:hover {
+            border-color: rgba(168, 85, 247, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(168, 85, 247, 0.2);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #a855f7;
+            font-weight: 600;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.1);
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .status-label {
+            color: #d1d5db;
+            font-size: 1rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-online {
+            color: #22c55e;
+        }
+
+        .status-online .status-dot {
+            background: #22c55e;
+            box-shadow: 0 0 10px #22c55e;
+        }
+
+        .status-offline {
+            color: #ef4444;
+        }
+
+        .status-offline .status-dot {
+            background: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+        }
+
+        .status-unknown {
+            color: #9ca3af;
+        }
+
+        .status-unknown .status-dot {
+            background: #9ca3af;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #a855f7;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #d1d5db;
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(168, 85, 247, 0.1);
+            border-top: 3px solid #a855f7;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #fca5a5;
+        }
+
+        .info-box {
+            background: rgba(30, 27, 75, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            margin-top: 30px;
+        }
+
+        .info-box h3 {
+            color: #a855f7;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #d1d5db;
+            line-height: 1.6;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        .node-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(168, 85, 247, 0.1);
+        }
+
+        .node-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.9rem;
+        }
+
+        .node-stat-label {
+            color: #9ca3af;
+        }
+
+        .node-stat-value {
+            color: #d1d5db;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .status-card {
+                padding: 20px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Luminous <span class="brand-accent">Hosting</span></h1>
+            <p class="subtitle">System Status Monitor</p>
+            <div class="nav-links">
+                <a href="https://panel.luminous-hosting.com">Panel</a>
+                <a href="https://support.luminous-hosting.com">Support</a>
+            </div>
+        </header>
+
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading status information...</p>
+        </div>
+
+        <div id="error" style="display: none;"></div>
+
+        <div id="status-content" style="display: none;">
+            <div class="status-grid">
+                <!-- Services Status Card -->
+                <div class="status-card">
+                    <h2 class="card-title">Services</h2>
+                    <div class="status-item">
+                        <span class="status-label">Pterodactyl Panel</span>
+                        <div class="status-indicator" id="panel-status">
+                            <span class="status-dot"></span>
+                            <span>Loading...</span>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Wings Status</span>
+                        <div class="status-indicator" id="wings-status">
+                            <span class="status-dot"></span>
+                            <span>Loading...</span>
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Daemon Status</span>
+                        <div class="status-indicator" id="daemon-status">
+                            <span class="status-dot"></span>
+                            <span>Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Server Statistics Card -->
+                <div class="status-card">
+                    <h2 class="card-title">Server Statistics</h2>
+                    <div class="status-item">
+                        <span class="status-label">Total Servers</span>
+                        <span class="stat-value" id="total-servers">-</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Servers Online</span>
+                        <span class="stat-value status-online" id="servers-online">-</span>
+                    </div>
+                </div>
+
+                <!-- Node Information Card -->
+                <div class="status-card" id="node-card" style="display: none;">
+                    <h2 class="card-title">Node Information</h2>
+                    <div id="node-info-content"></div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>System Health</h3>
+                <p id="health-message">All systems are operational.</p>
+                <p class="last-updated" id="last-updated">Last updated: Never</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let updateInterval;
+
+        async function fetchStatus() {
+            try {
+                const response = await fetch('https://api.luminous-hosting.com/status');
+                
+                if (!response.ok) {
+                    throw new Error(`API returned ${response.status}`);
+                }
+
+                const data = await response.json();
+                updateStatusDisplay(data);
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'none';
+                document.getElementById('status-content').style.display = 'block';
+            } catch (error) {
+                console.error('Error fetching status:', error);
+                displayError(error.message);
+            }
+        }
+
+        function updateStatusDisplay(data) {
+            // Update Pterodactyl Panel Status
+            const panelStatus = document.getElementById('panel-status');
+            if (data.pterodactyl && data.pterodactyl.status === 'online') {
+                panelStatus.className = 'status-indicator status-online';
+                panelStatus.innerHTML = '<span class="status-dot"></span><span>Online</span>';
+            } else {
+                panelStatus.className = 'status-indicator status-offline';
+                panelStatus.innerHTML = '<span class="status-dot"></span><span>Offline</span>';
+            }
+
+            // Update Wings Status (using node data if available)
+            const wingsStatus = document.getElementById('wings-status');
+            if (data.nodes && data.nodes.length > 0) {
+                // If we have node data, wings is likely online
+                wingsStatus.className = 'status-indicator status-online';
+                wingsStatus.innerHTML = '<span class="status-dot"></span><span>Online</span>';
+            } else {
+                wingsStatus.className = 'status-indicator status-unknown';
+                wingsStatus.innerHTML = '<span class="status-dot"></span><span>Unknown</span>';
+            }
+
+            // Update Daemon Status
+            const daemonStatus = document.getElementById('daemon-status');
+            if (data.nodes && data.nodes.length > 0 && data.nodes[0].daemon_listen) {
+                daemonStatus.className = 'status-indicator status-online';
+                daemonStatus.innerHTML = '<span class="status-dot"></span><span>Configured</span>';
+            } else {
+                daemonStatus.className = 'status-indicator status-unknown';
+                daemonStatus.innerHTML = '<span class="status-dot"></span><span>Unknown</span>';
+            }
+
+            // Update Server Statistics
+            if (data.servers) {
+                document.getElementById('total-servers').textContent = data.servers.total || 0;
+                // Note: Online count may not be accurate yet according to API capabilities
+                document.getElementById('servers-online').textContent = data.servers.online || 0;
+            }
+
+            // Update Node Information
+            if (data.nodes && data.nodes.length > 0) {
+                const nodeCard = document.getElementById('node-card');
+                const nodeInfoContent = document.getElementById('node-info-content');
+                nodeCard.style.display = 'block';
+                
+                let nodeHTML = '';
+                data.nodes.forEach(node => {
+                    const memoryPercent = node.allocated_resources ? 
+                        Math.round((node.allocated_resources.memory / node.memory) * 100) : 0;
+                    const diskPercent = node.allocated_resources ? 
+                        Math.round((node.allocated_resources.disk / node.disk) * 100) : 0;
+
+                    nodeHTML += `
+                        <div class="node-info">
+                            <div class="node-stat">
+                                <span class="node-stat-label">Node Name:</span>
+                                <span class="node-stat-value">${node.name || 'Unknown'}</span>
+                            </div>
+                            <div class="node-stat">
+                                <span class="node-stat-label">Location:</span>
+                                <span class="node-stat-value">${node.location_id || 'N/A'}</span>
+                            </div>
+                            <div class="node-stat">
+                                <span class="node-stat-label">Memory Usage:</span>
+                                <span class="node-stat-value">${memoryPercent}%</span>
+                            </div>
+                            <div class="node-stat">
+                                <span class="node-stat-label">Disk Usage:</span>
+                                <span class="node-stat-value">${diskPercent}%</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                nodeInfoContent.innerHTML = nodeHTML;
+            }
+
+            // Update last updated time
+            const now = new Date().toLocaleString();
+            document.getElementById('last-updated').textContent = `Last updated: ${now}`;
+
+            // Update health message
+            const healthMessage = document.getElementById('health-message');
+            if (data.pterodactyl && data.pterodactyl.status === 'online') {
+                healthMessage.textContent = 'All systems are operational.';
+            } else {
+                healthMessage.textContent = 'Some services may be experiencing issues. Please check back later.';
+            }
+        }
+
+        function displayError(errorMessage) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('status-content').style.display = 'none';
+            
+            const errorDiv = document.getElementById('error');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `
+                <strong>Unable to fetch status information</strong><br>
+                Error: ${errorMessage}<br>
+                <small>Retrying automatically...</small>
+            `;
+            errorDiv.style.display = 'block';
+        }
+
+        // Initial fetch
+        fetchStatus();
+
+        // Auto-refresh every 30 seconds
+        updateInterval = setInterval(fetchStatus, 30000);
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+        });
+    </script>
+</body>
+</html>
